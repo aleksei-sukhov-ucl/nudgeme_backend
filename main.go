@@ -19,13 +19,13 @@ const PORT = 443
 
 // this is the address & port where the SQL database can be accessed,
 // which is likely on the same machine
-const ADDRESS = "178.79.172.202:3306"
+const ADDRESS = "109.74.195.103:3306"
 
 var sqlPassword string = os.Getenv("SQL_PASSWORD")
 var domain string = os.Getenv("DOMAIN_NAME")
 
 func main() {
-	db := getDBConn("team26")
+	db := getDBConn("nudgemedb")
 	defer db.Close()
 
 	var mydb DataSource = &MyDB{db}

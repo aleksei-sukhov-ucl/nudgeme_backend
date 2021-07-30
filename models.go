@@ -1,5 +1,6 @@
 package main
 
+///Todo: Edit to feet the needs of the DB
 // NOTE: These structs are mostly for the expected JSON format, not necessarily the
 // database schema.
 // 'omitempty' indicates not to use default values if omitted, e.g. do not use
