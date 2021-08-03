@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
-	"os"
+	//"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -22,7 +22,9 @@ const PORT = 443
 const ADDRESS = "109.74.195.103:3306"
 
 var sqlPassword string = os.Getenv("SQL_PASSWORD")
+//var sqlPassword string = "Nudge101Me@UCL"
 var domain string = os.Getenv("DOMAIN_NAME")
+//var domain string = "health.nudgemehealth.co.uk"
 
 func main() {
 	db := getDBConn("nudgemedb")

@@ -141,11 +141,12 @@ func insertWellbeingRecord(record WellbeingRecord, db *sql.DB) error {
 func getMapTemplate(db *sql.DB, isMock bool) *MapTemplate {
 	// column names are case insensitive
 	var tableName string
-	if isMock {
-		tableName = "MOCK_DATA"
-	} else {
-		tableName = "scores"
-	}
+	//if isMock {
+	//	tableName = "MOCK_DATA"
+	//} else {
+	//	tableName = "scores"
+	//}
+	tableName = "scores"
 	postcodeGroupQuery := "SELECT postCode as name, AVG(wellBeingScore) as " +
 		"avgscore, COUNT(postcode) as quantity FROM " + tableName + " GROUP BY (Postcode)"
 	suppcodeGroupQuery := "SELECT Postcode as name, SupportCode as supportcode, " +
