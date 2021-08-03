@@ -7,12 +7,14 @@ package main
 // 0 for a missing int
 
 type WellbeingRecord struct {
-	PostCode       string `json:"postCode"`
-	WellbeingScore int16  `json:"wellbeingScore"`
-	WeeklySteps    int    `json:"weeklySteps,omitempty"`
-	ErrorRate      int    `json:"errorRate,omitempty"`
-	SupportCode    string `json:"supportCode"`
-	DateSent       string `json:"date_sent,omitempty"`
+	PostCode         string  `json:"postCode"`
+	WeeklySteps      uint    `json:"weeklySteps,omitempty"`
+	WellbeingScore   float64 `json:"wellbeingScore,omitempty"`
+	sputumColour     float64 `json:"sputumColour,omitempty"`
+	mrcDyspnoeaScale float64 `json:"mrcDyspnoeaScale,omitempty"`
+	//ErrorRate			int    `json:"errorRate,omitempty"`
+	SupportCode string `json:"supportCode"`
+	DateSent    string `json:"date_sent,omitempty"`
 }
 
 type User struct {
