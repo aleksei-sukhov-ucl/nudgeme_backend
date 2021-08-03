@@ -20,7 +20,7 @@ Follow these steps on the Linode server:
 
 - Clone or pull the repo into your home directory.
 - `cd` into `team26-nudgeme-backend` and `go build` in that project directory.
-- Start with `sudo systemdctl start nudgeme` or restart the systemd service with
+- Start with `sudo systemctl start nudgeme` or restart the systemd service with
 `sudo systemctl restart nudgeme`, *if it is not the first time running*.
 
 Of course, this can be done on any server, but *you'd need to set up your own
