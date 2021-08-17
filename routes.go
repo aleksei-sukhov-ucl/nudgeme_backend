@@ -3,8 +3,10 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"sync"
@@ -79,7 +81,7 @@ func setupRoutes(e *echo.Echo, db *sql.DB, mydb DataSource) {
 		}
 		return c.JSON(http.StatusOK, map[string]bool{"success": true})
 	})
-
+	e.POST("/upload_audio", upload)
 	// wellbeing sharing
 	e.GET("/add-friend", handleAddFriend)
 	e.POST("/user", handleCheckUser(mydb))
@@ -93,6 +95,42 @@ func setupRoutes(e *echo.Echo, db *sql.DB, mydb DataSource) {
 	// Only difference is we don't overwrite pending messages.
 	e.POST("/user/nudge", handleGetMessage(mydb, nudgeTableName))
 	e.POST("/user/nudge/new", handleNewMessage(mydb, nudgeTableName, false))
+}
+
+func upload(c echo.Context) error {
+	//-----------
+	// Read file
+	//-----------
+	// Source
+	file, err := c.FormFile("audioFile")
+	if err != nil {
+		fmt.Println("Error retrieving file from form data")
+		fmt.Println(err)
+		return err
+	}
+
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	// Destination
+	audioFile, err := ioutil.TempFile("Audio", "upoad-*.m4a")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer audioFile.Close()
+
+	fileBytes, err := ioutil.ReadAll(src)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	audioFile.Write(fileBytes)
+
+	return c.JSON(http.StatusOK, audioFile.Name())
 }
 
 func initTemplateCache(mainDb *sql.DB) {
@@ -124,8 +162,8 @@ func index(c echo.Context) error {
 // inserts (a copy of) wellbeing record into the database
 func insertWellbeingRecord(record WellbeingRecord, db *sql.DB) error {
 	query := `INSERT INTO scores` +
-		` (postCode, weeklySteps, wellbeingScore, sputumColour, mrcDyspnoeaScale, supportCode, date_sent)` +
-		` VALUES (?, ?, ?, ?, ?, ?, ?)`
+		` (postCode, weeklySteps, wellbeingScore, sputumColour, mrcDyspnoeaScale, supportCode, date_sent,audioUrl)` +
+		` VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 	_, err := db.Exec(query,
 		record.PostCode,
 		record.WeeklySteps,
@@ -134,7 +172,8 @@ func insertWellbeingRecord(record WellbeingRecord, db *sql.DB) error {
 		record.mrcDyspnoeaScale,
 		//record.ErrorRate,
 		record.SupportCode,
-		record.DateSent) // sql automatically converts to date from yyyy-MM-dd
+		record.DateSent,
+		record.AudioUrl) // sql automatically converts to date from yyyy-MM-dd
 	return err
 }
 

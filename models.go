@@ -15,6 +15,7 @@ type WellbeingRecord struct {
 	//ErrorRate			int    `json:"errorRate,omitempty"`
 	SupportCode string `json:"supportCode"`
 	DateSent    string `json:"date_sent,omitempty"`
+	AudioUrl    string `json:"audioUrl"`
 }
 
 type User struct {
