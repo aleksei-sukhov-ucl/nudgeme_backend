@@ -1,6 +1,9 @@
 package main
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -11,6 +14,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -134,7 +138,59 @@ func upload(c echo.Context) error {
 	}
 	audioFile.Write(fileBytes)
 
+	//Encryption of the file
+	//Step 1
+	secret := os.Getenv("AUDIO_PASSWORD")
+	audioFileToEncrypt := ReadFile(audioFile.Name())
+
+	//Step 2
+	cipherImage := EncryptAES(audioFileToEncrypt, []byte(secret))
+	error := WriteFile(cipherImage, audioFile.Name())
+	if err != nil {
+		log.Fatalln(error)
+	}
+
 	return c.JSON(http.StatusOK, audioFile.Name())
+}
+
+func EncryptAES(plainData, secret []byte) (cipherData []byte) {
+	block, _ := aes.NewCipher(secret)
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return
+	}
+	nonce := make([]byte, gcm.NonceSize())
+	_, err = io.ReadFull(rand.Reader, nonce)
+	if err != nil {
+		return
+	}
+
+	cipherData = gcm.Seal(
+		nonce,
+		nonce,
+		plainData,
+		nil)
+
+	return
+}
+
+func WriteFile(content []byte, filename string) (err error) {
+	filepath := fmt.Sprintf("%s", filename)
+
+	err = ioutil.WriteFile(filepath, content, 0644)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func ReadFile(filename string) (content []byte) {
+	filepath := fmt.Sprintf("%s", filename)
+	content, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return
 }
 
 func initTemplateCache(mainDb *sql.DB) {
