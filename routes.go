@@ -4,15 +4,16 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 	"html/template"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
-
-	"github.com/labstack/echo/v4"
 
 	// needed but not directly used
 	_ "github.com/go-sql-driver/mysql"
@@ -114,9 +115,12 @@ func upload(c echo.Context) error {
 		return err
 	}
 	defer src.Close()
+	// UUID for files
+	id := uuid.New()
+	filename := strings.TrimSuffix(fmt.Sprintf("*-%s.m4a", id), "\n")
 
 	// Destination
-	audioFile, err := ioutil.TempFile("Audio", "upoad-*.m4a")
+	audioFile, err := ioutil.TempFile("Audio", filename)
 	if err != nil {
 		fmt.Println(err)
 		return err
