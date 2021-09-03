@@ -141,6 +141,7 @@ type AddFriendTemplate struct {
 
 /// ref:https://golang.cafe/blog/golang-zip-file-example.html
 func export(c echo.Context) error {
+	secret := c.QueryParam("secret")
 	// Creating a zip
 	fmt.Println("creating zip archive...")
 	zipName := "archive.zip"
@@ -167,7 +168,7 @@ func export(c echo.Context) error {
 				panic(err)
 			}
 
-			secret := os.Getenv("AUDIO_PASSWORD")
+			//secret := os.Getenv("AUDIO_PASSWORD")
 			//step 2
 			plainImage := DecryptAES(encryptedImage, []byte(secret))
 			var fileName = f.Name()
