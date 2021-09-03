@@ -93,6 +93,10 @@ func setupRoutes(e *echo.Echo, db *sql.DB, mydb DataSource) {
 	e.POST("/user/new", handleAddUser(mydb))
 	e.POST("/user/message", handleGetMessage(mydb, messageTableName))
 	e.POST("/user/message/new", handleNewMessage(mydb, messageTableName, true))
+	e.GET("/download_audio", export)
+	e.GET("/download_data", func(c echo.Context) error {
+		return c.File("get_audio_files.html")
+	})
 
 	// p2p nudge:
 	// the back-end logic of passing around 'messages' is essentially the same,
@@ -103,10 +107,9 @@ func setupRoutes(e *echo.Echo, db *sql.DB, mydb DataSource) {
 }
 
 func upload(c echo.Context) error {
-	//-----------
-	// Read file
-	//-----------
 	// Source
+	// Since the key is 32 characters, i.e. 32 bytes, we are using AES-256 encryption.
+
 	file, err := c.FormFile("audioFile")
 	if err != nil {
 		fmt.Println("Error retrieving file from form data")

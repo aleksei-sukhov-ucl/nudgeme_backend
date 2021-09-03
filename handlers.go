@@ -1,8 +1,16 @@
 package main
 
 import (
+	"archive/zip"
+	"crypto/aes"
+	"crypto/cipher"
 	"encoding/json"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -129,6 +137,90 @@ func handleGetMessage(db DataSource, tableName string) func(echo.Context) error 
 type AddFriendTemplate struct {
 	Identifier string
 	PubKey     string
+}
+
+/// ref:https://golang.cafe/blog/golang-zip-file-example.html
+func export(c echo.Context) error {
+	// Creating a zip
+	fmt.Println("creating zip archive...")
+	zipName := "archive.zip"
+	archive, err := os.Create(zipName)
+	if err != nil {
+		panic(err)
+	}
+	defer archive.Close()
+	zipWriter := zip.NewWriter(archive)
+
+	pwd, _ := os.Getwd()
+	fmt.Println("PWD: " + pwd)
+	fmt.Println(pwd + "/Audio")
+	files, err := ioutil.ReadDir(pwd + "/Audio")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, f := range files {
+		fmt.Println("opening " + f.Name() + " file...")
+		if f.Name() != ".DS_Store" {
+			encryptedImage, err := ioutil.ReadFile("Audio/" + f.Name())
+			if err != nil {
+				panic(err)
+			}
+
+			secret := os.Getenv("AUDIO_PASSWORD")
+			//step 2
+			plainImage := DecryptAES(encryptedImage, []byte(secret))
+			var fileName = f.Name()
+			error := WriteFile(plainImage, fileName)
+			if error != nil {
+				log.Fatalln(error)
+			}
+
+			f1, err := os.Open(fileName)
+			if err != nil {
+				panic(err)
+			}
+
+			fmt.Println("writing first file to archive...")
+			w1, err := zipWriter.Create(fileName)
+			if err != nil {
+				panic(err)
+			}
+			if _, err := io.Copy(w1, f1); err != nil {
+				panic(err)
+			}
+
+			defer f1.Close()
+
+			defer os.Remove(fileName)
+		}
+	}
+
+	fmt.Println("closing zip archive...")
+	zipWriter.Close()
+
+	defer os.Remove(zipName)
+
+	return c.JSON(http.StatusOK, c.Attachment(zipName, zipName))
+}
+
+func DecryptAES(cipherData, secret []byte) (plainData []byte) {
+	block, err := aes.NewCipher(secret)
+	if err != nil {
+		return
+	}
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return
+	}
+	nonceSize := gcm.NonceSize()
+
+	nonce, ciphertext := cipherData[:nonceSize], cipherData[nonceSize:]
+	plainData, err = gcm.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return
+	}
+	return
 }
 
 func handleAddFriend(c echo.Context) error {
