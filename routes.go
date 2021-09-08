@@ -226,7 +226,7 @@ func index(c echo.Context) error {
 func insertWellbeingRecord(record WellbeingRecord, db *sql.DB) error {
 	query := `INSERT INTO scores` +
 		` (postCode, weeklySteps, wellbeingScore, sputumColour, mrcDyspnoeaScale, supportCode, date_sent, audioUrl, speechRateTest, testDuration)` +
-		` VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+		` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	_, err := db.Exec(query,
 		record.PostCode,
 		record.WeeklySteps,
