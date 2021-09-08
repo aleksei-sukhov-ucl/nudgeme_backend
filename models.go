@@ -12,6 +12,8 @@ type WellbeingRecord struct {
 	WellbeingScore   float64 `json:"wellbeingScore,omitempty"`
 	sputumColour     float64 `json:"sputumColour,omitempty"`
 	mrcDyspnoeaScale float64 `json:"mrcDyspnoeaScale,omitempty"`
+	speechRateTest   float64 `json:"speechRateTest,omitempty"`
+	testDuration     float64 `json:"testDuration,omitempty"`
 	//ErrorRate			int    `json:"errorRate,omitempty"`
 	SupportCode string `json:"supportCode"`
 	DateSent    string `json:"date_sent,omitempty"`

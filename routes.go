@@ -225,7 +225,7 @@ func index(c echo.Context) error {
 // inserts (a copy of) wellbeing record into the database
 func insertWellbeingRecord(record WellbeingRecord, db *sql.DB) error {
 	query := `INSERT INTO scores` +
-		` (postCode, weeklySteps, wellbeingScore, sputumColour, mrcDyspnoeaScale, supportCode, date_sent,audioUrl)` +
+		` (postCode, weeklySteps, wellbeingScore, sputumColour, mrcDyspnoeaScale, supportCode, date_sent, audioUrl, speechRateTest, testDuration)` +
 		` VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 	_, err := db.Exec(query,
 		record.PostCode,
@@ -236,7 +236,9 @@ func insertWellbeingRecord(record WellbeingRecord, db *sql.DB) error {
 		//record.ErrorRate,
 		record.SupportCode,
 		record.DateSent,
-		record.AudioUrl) // sql automatically converts to date from yyyy-MM-dd
+		record.AudioUrl,
+		record.speechRateTest,
+		record.testDuration) // sql automatically converts to date from yyyy-MM-dd
 	return err
 }
 
