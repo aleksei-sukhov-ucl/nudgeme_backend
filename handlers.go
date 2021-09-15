@@ -5,7 +5,6 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -140,10 +139,10 @@ type AddFriendTemplate struct {
 }
 
 /// ref:https://golang.cafe/blog/golang-zip-file-example.html
+
 func export(c echo.Context) error {
 	secret := c.QueryParam("secret")
 	// Creating a zip
-	fmt.Println("creating zip archive...")
 	zipName := "archive.zip"
 	archive, err := os.Create(zipName)
 	if err != nil {
@@ -153,22 +152,17 @@ func export(c echo.Context) error {
 	zipWriter := zip.NewWriter(archive)
 
 	pwd, _ := os.Getwd()
-	fmt.Println("PWD: " + pwd)
-	fmt.Println(pwd + "/Audio")
 	files, err := ioutil.ReadDir(pwd + "/Audio")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, f := range files {
-		fmt.Println("opening " + f.Name() + " file...")
 		if f.Name() != ".DS_Store" {
 			encryptedImage, err := ioutil.ReadFile("Audio/" + f.Name())
 			if err != nil {
 				panic(err)
 			}
-
-			//secret := os.Getenv("AUDIO_PASSWORD")
 			//step 2
 			plainImage := DecryptAES(encryptedImage, []byte(secret))
 			var fileName = f.Name()
@@ -176,13 +170,10 @@ func export(c echo.Context) error {
 			if error != nil {
 				log.Fatalln(error)
 			}
-
 			f1, err := os.Open(fileName)
 			if err != nil {
 				panic(err)
 			}
-
-			fmt.Println("writing first file to archive...")
 			w1, err := zipWriter.Create(fileName)
 			if err != nil {
 				panic(err)
@@ -192,16 +183,11 @@ func export(c echo.Context) error {
 			}
 
 			defer f1.Close()
-
 			defer os.Remove(fileName)
 		}
 	}
-
-	fmt.Println("closing zip archive...")
 	zipWriter.Close()
-
 	defer os.Remove(zipName)
-
 	return c.JSON(http.StatusOK, c.Attachment(zipName, zipName))
 }
 
