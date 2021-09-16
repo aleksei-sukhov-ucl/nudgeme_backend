@@ -138,8 +138,7 @@ type AddFriendTemplate struct {
 	PubKey     string
 }
 
-/// ref:https://golang.cafe/blog/golang-zip-file-example.html
-
+// used to exporting all the audio files
 func export(c echo.Context) error {
 	secret := c.QueryParam("secret")
 	// Creating a zip
@@ -191,6 +190,7 @@ func export(c echo.Context) error {
 	return c.JSON(http.StatusOK, c.Attachment(zipName, zipName))
 }
 
+// DecryptAES Used to decrypt audio files
 func DecryptAES(cipherData, secret []byte) (plainData []byte) {
 	block, err := aes.NewCipher(secret)
 	if err != nil {

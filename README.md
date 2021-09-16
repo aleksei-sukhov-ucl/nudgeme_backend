@@ -1,16 +1,14 @@
-# Team 26's Back-end Go Server
+# NusgeShare Back-end Go Server
 
 [![Go](https://github.com/thevirtuoso1973/team26-nudgeme-backend/actions/workflows/go.yml/badge.svg)](https://github.com/thevirtuoso1973/team26-nudgeme-backend/actions/workflows/go.yml)
 
-This was initially started as a rewrite of the previous (node.js) back-end since I anticipated
-we would need to write some back-end code for some extra features. As expected,
-we did, and the back-end now holds the code for three parts:
+The back-end now holds the code for three parts:
 
 - wellbeing visualisation, with Google Maps
 - data/message passing between mobile users (i.e. for user wellbeing sharing and
 sending step goals)
 - add friend page, to serve a deeplink
-
+  description
 ## Deployment Guide & Usage
 
 You need an installation of `go` (use your package manager, or otherwise). You can verify
@@ -47,7 +45,7 @@ new domain name.
 
 ```
 [Unit]
-Description=back-end for NudgeMe
+Description=back-end for NudgeShare
 Documentation=https://github.com/thevirtuoso1973/team26-nudgeme-backend
 After=network.target
 
