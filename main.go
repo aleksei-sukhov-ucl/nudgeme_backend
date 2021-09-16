@@ -37,6 +37,11 @@ func main() {
 	e.AutoTLSManager.HostPolicy = autocert.HostWhitelist(domain)
 	e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
 
+	//HTTP to https redirect
+	e.Pre(middleware.HTTPSWWWRedirect())
+	e.Pre(middleware.HTTPSNonWWWRedirect())
+
+	//Loggers
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.Gzip())
