@@ -1,7 +1,5 @@
 # NusgeShare Back-end Go Server
 
-[![Go](https://github.com/thevirtuoso1973/team26-nudgeme-backend/actions/workflows/go.yml/badge.svg)](https://github.com/thevirtuoso1973/team26-nudgeme-backend/actions/workflows/go.yml)
-
 The back-end now holds the code for three parts:
 
 - wellbeing visualisation, with Google Maps
@@ -17,7 +15,7 @@ you have it with `go version`.
 Follow these steps on the Linode server:
 
 - Clone or pull the repo into your home directory.
-- `cd` into `team26-nudgeme-backend` and `go build` in that project directory.
+- `cd` into `nudgeme-backend` and `go build` in that project directory.
 - Start with `sudo systemctl start nudgeme` or restart the systemd service with
 `sudo systemctl restart nudgeme`, *if it is not the first time running*.
 
@@ -32,7 +30,7 @@ where it searches for the binary.
 The service config file is located in `/lib/systemd/system/nudgeme.service`.
 
 Current domain that links to the server:
-`https://comp0016.cyberchris.xyz/`.
+`https://nudgeshare.org/`.
 This is retrieved from the environment variable in the `nudgeme.service` file.
 
 ### Example `nudgeme.service` file
@@ -46,17 +44,18 @@ new domain name.
 ```
 [Unit]
 Description=back-end for NudgeShare
-Documentation=https://github.com/thevirtuoso1973/team26-nudgeme-backend
+Documentation=https://github.com/aleksei-sukhov-ucl/nudgeme_backend
 After=network.target
 
 [Service]
-WorkingDirectory=/home/ct/team26-nudgeme-backend
+WorkingDirectory=/home/aleksei_sukhov/nudgeme_backend
 Type=simple
 User=root
-ExecStart=/home/ct/team26-nudgeme-backend/nudgeme
+ExecStart=/home/aleksei_sukhov/nudgeme_backend/nudgeme
 Restart=on-failure
 Environment="SQL_PASSWORD=$PASSWORD"
-Environment="DOMAIN_NAME=comp0016.cyberchris.xyz"
+Environment="DOMAIN_NAME=nudgeshare.org"
+Environment="AUDIO_PASSWORD=$PASSWORD"
 
 [Install]
 WantedBy=multi-user.target
